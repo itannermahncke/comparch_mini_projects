@@ -1,4 +1,4 @@
-filename = blink
+filename = discretecolorwheel
 pcf_file = ../common/iceBlinkPico.pcf
 
 build:
