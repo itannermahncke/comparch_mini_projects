@@ -15,8 +15,7 @@ module pwm #(
     always_ff @(posedge clk) begin
         if (pwm_count == PWM_INTERVAL - 1) begin
             pwm_count <= 0;
-        end
-        else begin
+        end else begin
             pwm_count <= pwm_count + 1;
         end
     end

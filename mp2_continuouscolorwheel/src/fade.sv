@@ -11,7 +11,7 @@ module fade #(
     parameter INITIAL_DUTY_CYCLE = 0
 )(
     input logic clk,
-    output logic [$clog2(PWM_INTERVAL) - 1:0] cycle_value,
+    output logic [$clog2(PWM_INTERVAL) - 1:0] cycle_value
 );
 
     // FSM states
@@ -26,16 +26,12 @@ module fade #(
 
     // Timing variables
     logic [$clog2(STEP_INTERVAL) - 1:0] count = 0;
-    logic [$clog2(HOLD_MAX) - 1:0] step_count = INITIAL_STEP_COUNT;
+    logic [$clog2(HOLD_MAX) - 1:0] step_count = (INITIAL_STEP_COUNT * STEP_MAX);
     logic time_to_step = 1'b0;
 
     initial begin
         cycle_value = INITIAL_DUTY_CYCLE * (STEP_MAX + 1) * STEP_SIZE;
     end
-
-    // Register the next state of the FSM
-    always_ff @(posedge time_to_transition)
-        current_state <= next_state;
 
     // Compute the next state of the FSM
     always_comb begin
@@ -57,8 +53,7 @@ module fade #(
         if (count == STEP_INTERVAL) begin
             count <= 0;
             time_to_step <= 1'b1;
-        end
-        else begin
+        end else begin
             count <= count + 1;
             time_to_step <= 1'b0;
         end
@@ -76,17 +71,10 @@ module fade #(
 
     // Transition state when appropriate
     always_ff @(posedge time_to_step) begin
-        // if stepping
-        if (current_state[0] == 1'b0 && step_count == STEP_MAX) begin
+        if (step_count == HOLD_MAX || (step_count == STEP_MAX && current_state[0] == 1'b0)) begin
             step_count <= 0;
             current_state <= next_state;
-        end
-        // else if holding
-        else if (current_state[1] == 1'b1 && step_count == HOLD_MAX) begin
-            step_count <= 0;
-            current_state <= next_state;
-        end
-        else begin
+        end else begin
             step_count <= step_count + 1;
         end
     end

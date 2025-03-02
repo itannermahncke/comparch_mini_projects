@@ -1,4 +1,4 @@
-`include "color.sv"
+`include "color_cycle.sv"
 
 // top level module
 module top #(
@@ -7,7 +7,7 @@ module top #(
     input logic     clk, 
     output logic    RGB_R,
     output logic    RGB_G,
-    output logic    RGB_B,
+    output logic    RGB_B
 );
 
   logic red, green, blue;
@@ -22,9 +22,7 @@ module top #(
       .CLR(red)
   );
 
-  color_cycle #(
-    .PWM_INTERVAL(PWM_INTERVAL)
-    ) green_light (
+  color_cycle #(PWM_INTERVAL) green_light (
       .clk(clk),
       .CLR(green)
   );
