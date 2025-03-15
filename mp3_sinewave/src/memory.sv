@@ -15,6 +15,6 @@ module memory #(
     end
   end
 
-  assign data = sample_memory[read_address];
+  assign read_data = sample_memory[read_address];
 
 endmodule
